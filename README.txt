@@ -15,7 +15,7 @@ Full port scanning, algos for IPID incrementation type
 
 
 files:
-ICMPScanner.py
+ICMPScanner.py -SOON TO BE DEPRECIATED
 	Method for sending a number of pings to a host and analizing what we get bac
 ICMPSession.py
 	helper class that gathers and processes data from ICMP echo packets, gives packet data, delay times, etc.
@@ -25,6 +25,7 @@ zombiescanner.py
 	Our main method that launches the TCP and ICMP scans
 
 Usage:
-
+#default scan using port 80
 ~# python zombiescanner.py 10.0.0.1
-
+#specify port 455 for TCP scan
+~# python zombiescanner.py 10.0.0.1 455
