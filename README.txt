@@ -15,10 +15,8 @@ Full port scanning, algos for IPID incrementation type
 
 
 files:
-ICMPScanner.py -SOON TO BE DEPRECIATED
-	Method for sending a number of pings to a host and analizing what we get bac
 ICMPSession.py
-	helper class that gathers and processes data from ICMP echo packets, gives packet data, delay times, etc.
+	Object-oriented method of getting data from ICMP echo packets, gives packet data, delay times, etc.
 TCPScanner.py
 	Implements a basic TCP ping and returns the IPID.
 zombiescanner.py
