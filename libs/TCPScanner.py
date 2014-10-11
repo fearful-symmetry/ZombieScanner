@@ -6,8 +6,7 @@ import argparse
 import socket
 import struct
 import random
-from ICMPScanner import start_ping
-from ICMPScanner import make_checksum
+from ICMPSession import make_checksum
 from ICMPSession import *
 
 
@@ -27,7 +26,6 @@ def construct_packet(dest_port, ip_addr):
 
     #This is our hackey way of getting our interface IP
     #useful for systems with more than one NIC/IP
-    #ping_data, dummy_data, dummy_data1, dummy_data2 = start_ping(ip_addr,1)
     pings = ICMPSession(ip_addr)
     reach = pings.start_ping(2)
 
@@ -234,4 +232,3 @@ def scan_addr(addr, port):
     # final_packet = construct_packet(port, addr)
     # send_packet(final_packet, addr)
     # return listen_packet()
-

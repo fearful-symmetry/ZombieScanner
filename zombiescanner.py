@@ -42,7 +42,6 @@ def main():
     addr = args.dest
     port = args.port
     verb = args.verbose
- 
 
 
     if check_ipv4(addr):
@@ -58,14 +57,14 @@ def main():
         elif port_status:
             print 'data for host: {}, TCP port: {} is open'.format(addr, port)
         else:
-           print 'data for host: {}, TCP port: {} is closed'.format(addr, port) 
+           print 'data for host: {}, TCP port: {} is closed'.format(addr, port)
 
         pings.print_stats()
         print 'avg delay={}ms'.format(pings.delay())
         print 'icmp ipid={}'.format(pings.get_header_item_list("IPID"))
         print 'tcp ipid={}'.format(tcp_id)
 
-        
+
         if verb:
             print ''
             print "Data from last ICMP packet:"
