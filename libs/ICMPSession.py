@@ -14,14 +14,12 @@ class ICMPSession(object):
     """
     a custom class that takes ICMPSession
     packets and breaks them down into
-    dictionary files, and also holds delay values
+    dictionary files, also holds delay values
     """
 
     def __init__(self, ip):
         """
-        class will take a list of  dictionaries
-        items are the string packet returned by socket.socket()
-        and the delay time of the ping
+        Init With IP.
         """
         self.remote_ip = ip
         self.packet_data_list = []
@@ -68,14 +66,10 @@ class ICMPSession(object):
         The main method for our Ping. makes the socket, and gets the data.
         """
         addr = self.remote_ip
-        # sent_count = 0
-        # receive_count = 0
-        # timeout_count = 0
         system_id = os.getpid()  & 0xFFFF
         packet_list = []
-        #session_pings = ICMPSession()
 
-        #try/catch block. Exception if script is not run as root
+        #Exception if script is not run as root
         for i in range(0, p_count):
             try:
                 #make a BSD socket, using Py's wrapper on the Socket() call.
@@ -92,7 +86,7 @@ class ICMPSession(object):
             send_time = send_packet(current_socket, addr)
 
             if send_time == None:
-                #return None, None, None, None #error from send method
+                #error from send method
                 return False
 
             self.sent_count += 1
@@ -104,9 +98,6 @@ class ICMPSession(object):
                 self.receive_count += 1
                 packet_list.append(raw_packet)
                 delay = (receive_time - send_time) * 1000.0
-
-                # session_pings.append_packet(raw_packet)
-                # session_pings.append_delay(delay)
                 self.append_packet(raw_packet)
                 self.append_delay(delay)
             else:
@@ -116,9 +107,6 @@ class ICMPSession(object):
             return  False
         else:
             return True
-            #return session_pings, sent_count, receive_count, timeout_count
-
-
 
 
     def append_packet(self, packet):
