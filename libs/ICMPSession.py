@@ -180,6 +180,7 @@ class ICMPSession(object):
         return round(total_delay, 3)
 
 
+#end of dedicated class methods, begin generic ICMP tools
 def process_packet_list(data):
     """
     This will take a raw list of items

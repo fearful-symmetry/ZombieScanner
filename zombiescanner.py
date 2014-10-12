@@ -38,6 +38,7 @@ def main():
     parser.add_argument('port', nargs='?', default =80, type=int, help="remote host port number")
     parser.add_argument("-v","--verbose",help="print more TCP/ICMP data", action="store_true")
 
+    #more compact vars for cmd ln args
     args = parser.parse_args()
     addr = args.dest
     port = args.port
@@ -46,12 +47,12 @@ def main():
 
     if check_ipv4(addr):
         print ''
-        #print 'tcp ipid={}'.format(scan_addr(addr, port))
+        #3 calls that scan TCP/ICMP
         tcp_id, port_status = scan_addr(addr, port)
         pings = ICMPSession(addr)
         pings.start_ping(5)
 
-
+        #print status of port
         if tcp_id == None:
             print'data for host: {}, TCP port: {} is filtered'.format(addr, port)
         elif port_status:
@@ -59,6 +60,7 @@ def main():
         else:
            print 'data for host: {}, TCP port: {} is closed'.format(addr, port)
 
+        #prints lists of data from host
         pings.print_stats()
         print 'avg delay={}ms'.format(pings.delay())
         print 'icmp ipid={}'.format(pings.get_header_item_list("IPID"))
