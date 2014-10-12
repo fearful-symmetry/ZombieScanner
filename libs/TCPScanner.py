@@ -223,12 +223,7 @@ def scan_addr(addr, port):
         final_packet = construct_packet(port, addr)
         send_packet(final_packet, addr)
         ipid, port_status = listen_packet()
-        # if port_status == None:
-#             return None, None
         tcp_id_list.append(ipid)
         port_open = port_status
 
     return tcp_id_list, port_open
-    # final_packet = construct_packet(port, addr)
-    # send_packet(final_packet, addr)
-    # return listen_packet()
