@@ -7,6 +7,8 @@ import select
 import struct
 import time
 import socket
+import random
+from ICMPSession import *
 
 class TCPSession(object):
     """
@@ -48,11 +50,11 @@ class TCPSession(object):
         port_open = False
 
         for port in port_array:
-            final_packet = construct_packet(port)
-            send_packet(final_packet)
-            listen_packet()
+            final_packet = self.construct_packet(port)
+            self.send_packet(final_packet)
+            ipid, status = self.listen_packet()
 
-    def construct__packet(self, dest_port):
+    def construct_packet(self, dest_port):
         """
         Construct our raw TCP packet
         """
@@ -120,8 +122,8 @@ class TCPSession(object):
                                 tcp_check,
                                 tcp_urg_ptr)
 
-        source_address = socket.inet_aton(interface_ip)
-        dest_address = socket.inet_aton(ip_addr)
+        source_address = socket.inet_aton(self.nic_ip)
+        dest_address = socket.inet_aton(self.remote_ip)
         placeholder = 0
         protocol = socket.IPPROTO_TCP
         tcp_length = len(tcp_header)
@@ -180,12 +182,15 @@ class TCPSession(object):
             current_socket.close()
             raise
 
+    def print_dict(self):
+        print self.packet_data_list
 
     def listen_packet(self):
         """
         Listens on the socket
         and prints the packet it gets
         """
+        temp_dict = {}
         timeout = 1.0
         #This is our listening socket
         try:
@@ -198,6 +203,7 @@ class TCPSession(object):
         input_ready, dummyoutput, dummyexcept = select.select([current_socket], [], [], timeout)
 
         if input_ready == []:
+            temp_dict = None
             return None, None
 
         data_back = current_socket.recvfrom(65565)
@@ -232,5 +238,13 @@ class TCPSession(object):
         port_status = True;
         if return_flags == 20 or return_flags == 4:
             port_status = False
+
+        #pack data
+        temp_dict["IPID"] = iph[3]
+        temp_dict["status"] = port_status
+        temp_dict["src_pt"] = source_port
+        temp_dict["dest_pt"] = dest_port
+
+        self.packet_data_list.append(temp_dict)
 
         return iph[3], port_status
