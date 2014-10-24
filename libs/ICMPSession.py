@@ -119,6 +119,9 @@ class ICMPSession(object):
         self.packet_data_list.append(temp_dict)
 
     def get_packet_list(self):
+        """
+        returns the list of dictionaries
+        """
         return self.packet_data_list
 
     def print_dict(self):

@@ -46,18 +46,68 @@ class TCPSession(object):
         """
         return len(self.packet_data_list)
 
+
+    def __getitem__(self, key):
+        """
+        Enables use of the instance[key] usage
+        """
+
+        if not isinstance(key, int):
+            raise TypeError
+
+        return self.packet_data_list[key]
+
+
+
+    def print_dict(self):
+        print self.packet_data_list
+
+
+    def get_packet_list(self):
+        """
+        returns the list of dictionaries
+        """
+        return self.packet_data_list
+
+    def get_header_item_list(self, key):
+        """
+        takes a key item, and returns a list
+        of all the instances of that header item across
+        all of the packets
+        """
+
+        if not isinstance(key, str):
+            raise TypeError
+
+        item_list = []
+
+        for packet in self.packet_data_list:
+            item_list.append(packet[key])
+
+        return item_list
+
+
     def scan_addr_at_port(self, port_array):
         port_open = False
 
-        for port in port_array:
-            final_packet = self.construct_packet(port)
+        if type(port_array) is list:
+            for port in port_array:
+                final_packet = self.construct_packet(port)
+                self.send_packet(final_packet)
+                self.listen_packet()
+        elif type(port_array) is int:
+            final_packet = self.construct_packet(port_array)
             self.send_packet(final_packet)
-            ipid, status = self.listen_packet()
+            self.listen_packet()
+        else:
+            print type(port_array)
+            raise TypeError
 
     def construct_packet(self, dest_port):
         """
         Construct our raw TCP packet
         """
+
         ip_ver = 4
         ip_ihl = 5
         ip_dscp = 0
@@ -182,8 +232,6 @@ class TCPSession(object):
             current_socket.close()
             raise
 
-    def print_dict(self):
-        print self.packet_data_list
 
     def listen_packet(self):
         """
@@ -203,8 +251,13 @@ class TCPSession(object):
         input_ready, dummyoutput, dummyexcept = select.select([current_socket], [], [], timeout)
 
         if input_ready == []:
-            temp_dict = None
-            return None, None
+            #print "TIMEOUT"
+            temp_dict["IPID"] = 0
+            temp_dict["status"] = "filtered"
+            temp_dict["src_pt"] = 0
+            temp_dict["dest_pt"] = 0
+            self.packet_data_list.append(temp_dict)
+            return
 
         data_back = current_socket.recvfrom(65565)
         current_socket.close()
@@ -235,9 +288,10 @@ class TCPSession(object):
         acknowledgement = tcph[3]
         return_flags = tcph[5]
 
-        port_status = True;
+        port_status = "open";
+        #flags are RST, or ACK/RST
         if return_flags == 20 or return_flags == 4:
-            port_status = False
+            port_status = "closed"
 
         #pack data
         temp_dict["IPID"] = iph[3]
@@ -246,5 +300,3 @@ class TCPSession(object):
         temp_dict["dest_pt"] = dest_port
 
         self.packet_data_list.append(temp_dict)
-
-        return iph[3], port_status

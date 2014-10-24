@@ -6,6 +6,7 @@ Launcher script
 import sys
 import argparse
 from libs.ICMPSession import *
+from libs.TCPSession import *
 from libs.TCPScanner import scan_addr
 
 def check_ipv4(addr):
@@ -47,15 +48,24 @@ def main():
 
     if check_ipv4(addr):
         print ''
-        #3 calls that scan TCP/ICMP
-        tcp_id, port_status = scan_addr(addr, port)
+        #tcp_id, port_status = scan_addr(addr, port)
+        #ICMP scanning
         pings = ICMPSession(addr)
         pings.start_ping(5)
 
+        #TCP scan
+        port_list = [port] * 5
+        scans = TCPSession(addr)
+        scans.scan_addr_at_port(port_list)
+        last_tcp = scans[-1]
+
+        tcp_id = last_tcp['IPID']
+        port_status = last_tcp['status']
+
         #print status of port
-        if tcp_id == None:
+        if port_status == "filtered":
             print'data for host: {}, TCP port: {} is filtered'.format(addr, port)
-        elif port_status:
+        elif port_status == "open":
             print 'data for host: {}, TCP port: {} is open'.format(addr, port)
         else:
            print 'data for host: {}, TCP port: {} is closed'.format(addr, port)
@@ -64,7 +74,7 @@ def main():
         pings.print_stats()
         print 'avg delay={}ms'.format(pings.delay())
         print 'icmp ipid={}'.format(pings.get_header_item_list("IPID"))
-        print 'tcp ipid={}'.format(tcp_id)
+        print 'tcp ipid={}'.format(scans.get_header_item_list("IPID"))
 
 
         if verb:
