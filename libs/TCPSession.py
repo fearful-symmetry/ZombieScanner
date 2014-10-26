@@ -2,13 +2,12 @@
 OO method of getting data From TCP scan.
 """
 import sys
-import os
 import select
 import struct
-import time
 import socket
 import random
-from ICMPSession import *
+from libs.ICMPSession import ICMPSession
+from libs.ICMPSession import make_checksum
 
 class TCPSession(object):
     """
@@ -60,6 +59,9 @@ class TCPSession(object):
 
 
     def print_dict(self):
+        """
+        prints the dictionary
+        """
         print self.packet_data_list
 
 
@@ -88,7 +90,9 @@ class TCPSession(object):
 
 
     def scan_addr_at_port(self, port_array):
-        port_open = False
+        """
+        takes an array of ports, or a single port, and pings it
+        """
 
         if type(port_array) is list:
             for port in port_array:
@@ -137,7 +141,7 @@ class TCPSession(object):
 
         tcp_source = 64703 #source port
         tcp_dest = dest_port
-        tcp_seq = random.randint(100,700)
+        tcp_seq = 450 #random.randint(100, 700)
         tcp_ack_seq = 0
         tcp_doff = 5
         #flags
@@ -250,12 +254,13 @@ class TCPSession(object):
 
         input_ready, dummyoutput, dummyexcept = select.select([current_socket], [], [], timeout)
 
+        #timeout
         if input_ready == []:
-            #print "TIMEOUT"
             temp_dict["IPID"] = 0
             temp_dict["status"] = "filtered"
             temp_dict["src_pt"] = 0
             temp_dict["dest_pt"] = 0
+            temp_dict["ack"] = 0
             self.packet_data_list.append(temp_dict)
             return
 
@@ -288,12 +293,13 @@ class TCPSession(object):
         acknowledgement = tcph[3]
         return_flags = tcph[5]
 
-        port_status = "open";
+        port_status = "open"
         #flags are RST, or ACK/RST
         if return_flags == 20 or return_flags == 4:
             port_status = "closed"
 
         #pack data
+        temp_dict["ack"] = acknowledgement
         temp_dict["IPID"] = iph[3]
         temp_dict["status"] = port_status
         temp_dict["src_pt"] = source_port

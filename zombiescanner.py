@@ -3,11 +3,12 @@ zombie scanner
 Launcher script
 """
 
-import sys
+
 import argparse
-from libs.ICMPSession import *
-from libs.TCPSession import *
-from libs.TCPScanner import scan_addr
+import operator
+from libs.ICMPSession import ICMPSession
+from libs.TCPSession import TCPSession
+
 
 def check_ipv4(addr):
     """
@@ -29,6 +30,23 @@ def check_ipv4(addr):
 
     return True
 
+def get_status(scans):
+    """
+    Looks for more than one response, to compensate for packet loss
+    """
+    stat_list = scans.get_header_item_list("status")
+    stat_dict = {"open": 0, "closed": 0, "filtered": 0}
+
+
+    for status in stat_list:
+        if status == "open":
+            stat_dict["open"] += 1
+        elif status == "closed":
+            stat_dict["closed"] += 1
+        elif status == "filtered":
+            stat_dict["filtered"] += 1
+
+    return max(stat_dict.iteritems(), key=operator.itemgetter(1))[0]
 
 def main():
     """
@@ -36,31 +54,29 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Get IP, port and other options')
     parser.add_argument('dest', help="the IP adress to  ping")
-    parser.add_argument('port', nargs='?', default =80, type=int, help="remote host port number")
-    parser.add_argument("-v","--verbose",help="print more TCP/ICMP data", action="store_true")
+    parser.add_argument('port', nargs='?', default=80, type=int, help="remote host port number")
+    parser.add_argument("-v", "--verbose", help="print more TCP/ICMP data", action="store_true")
 
     #more compact vars for cmd ln args
     args = parser.parse_args()
     addr = args.dest
     port = args.port
     verb = args.verbose
+    ping_nums = 5
 
 
     if check_ipv4(addr):
         print ''
-        #tcp_id, port_status = scan_addr(addr, port)
         #ICMP scanning
         pings = ICMPSession(addr)
-        pings.start_ping(5)
+        pings.start_ping(ping_nums)
 
         #TCP scan
-        port_list = [port] * 5
+        #list of 5 ports
+        port_list = [port] * ping_nums
         scans = TCPSession(addr)
         scans.scan_addr_at_port(port_list)
-        last_tcp = scans[-1]
-
-        tcp_id = last_tcp['IPID']
-        port_status = last_tcp['status']
+        port_status = get_status(scans)
 
         #print status of port
         if port_status == "filtered":
@@ -68,13 +84,15 @@ def main():
         elif port_status == "open":
             print 'data for host: {}, TCP port: {} is open'.format(addr, port)
         else:
-           print 'data for host: {}, TCP port: {} is closed'.format(addr, port)
+            print 'data for host: {}, TCP port: {} is closed'.format(addr, port)
 
         #prints lists of data from host
         pings.print_stats()
+        print 'src port={}'.format(scans.get_header_item_list("src_pt"))
         print 'avg delay={}ms'.format(pings.delay())
         print 'icmp ipid={}'.format(pings.get_header_item_list("IPID"))
         print 'tcp ipid={}'.format(scans.get_header_item_list("IPID"))
+        print 'ack numbers={}'.format(scans.get_header_item_list("ack"))
 
 
         if verb:
