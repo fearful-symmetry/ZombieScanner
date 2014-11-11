@@ -4,9 +4,12 @@ An early prototype of a network scanner script that will use TCP + ICMP to scan 
 Version Control:
 
 1.0:
-Initial version fully-functioning version, takes IP and sends ICMP and TCP pings, prints packet data
+	Initial version fully-functioning version, takes IP and sends ICMP and TCP pings, prints packet data
 
+planned versions:
 
+1.1:
+	Make a more useful verbose mode.
 
 
 files:
@@ -15,9 +18,9 @@ ICMPSession.py
 TCPSession.py
 	Object-oriented method of sending multiple TCP "pings", similar in implementation to a SYN scan
 helpers.py
-	a few common methods used across TCP and ICMP network code
+	a few common methods used across TCP and ICMP network code.
 zombiescanner.py
-	Our main method that launches the TCP and ICMP scans
+	Our main method that launches the TCP and ICMP scans.
 
 Usage:
 //default scan using port 80
