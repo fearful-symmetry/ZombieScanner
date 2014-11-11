@@ -1,0 +1,15 @@
+Data and research:
+
+TCP idle port scanning:
+http://nmap.org/book/idlescan.html
+http://nmap.org/presentations/CanSecWest03/CD_Content/idlescan_paper/idlescan.html
+
+IPIDs:
+http://seclists.org/bugtraq/2001/May/44
+http://nmap.org/book/osdetect-usage.html
+http://nmap.org/book/osdetect-methods.html#osdetect-ti
+
+hping
+http://serverfault.com/questions/258790/changing-tcp-ip-ipid-sequence-generation-algorithm-on-windows-server
+http://0daysecurity.com/articles/hping3_examples.html
+
