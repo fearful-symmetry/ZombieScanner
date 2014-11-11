@@ -1,5 +1,5 @@
 Project: Ping Zombie
-An early prototype of a network scanner script that will use TCP + ICMP to scan a network and search for targets that can be used as zombies in an TCP idle port scan.
+A network scanner script that uses TCP/ICMP to scan a remote host and print IPID values that could indicate vulnerability to idle port scans. Written as an experiment in python raw socket code
 
 Version Control:
 
