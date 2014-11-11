@@ -4,21 +4,18 @@ An early prototype of a network scanner script that will use TCP + ICMP to scan 
 Version Control:
 
 1.0:
-Initial version, proof of concept  to show IPID can be extracted from a ping packet using python libraries
+Initial version fully-functioning version, takes IP and sends ICMP and TCP pings, prints packet data
 
-1.5:
-Added prototype TCP ping. grabs IPID from TCP
-
-Next version:
-Full port scanning, algos for IPID incrementation type
 
 
 
 files:
 ICMPSession.py
 	Object-oriented method of getting data from ICMP echo packets, gives packet data, delay times, etc.
-TCPScanner.py
-	Implements a basic TCP ping and returns the IPID.
+TCPSession.py
+	Object-oriented method of sending multiple TCP "pings", similar in implementation to a SYN scan
+helpers.py
+	a few common methods used across TCP and ICMP network code
 zombiescanner.py
 	Our main method that launches the TCP and ICMP scans
 
