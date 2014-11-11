@@ -51,3 +51,7 @@ data for host: 192.168.1.151, TCP port: 21 is closed
 avg delay=0.414ms
 icmp ipid=[11808, 11809, 11810, 11811, 11812]
 tcp ipid=[11815, 11816, 11817, 11818, 11819]
+
+
+LICENSE
+Licensed under GNU GPL v3: https://www.gnu.org/licenses/quick-guide-gplv3.html
