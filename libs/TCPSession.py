@@ -246,6 +246,8 @@ class TCPSession(object):
         temp_dict = {}
         timeout = 1.0
         #This is our listening socket
+        #for reasons unknown to me, IPPROTO_TCP must be passed for
+        #the packet sniffing socket, sending packet uses IPPROTO_RAW
         try:
             current_socket = socket.socket(socket.AF_INET,
                             socket.SOCK_RAW,
@@ -253,6 +255,7 @@ class TCPSession(object):
         except socket.error, msg:
             print str(msg[0])
 
+        #listen
         input_ready, dummyoutput, dummyexcept = select.select([current_socket], [], [], timeout)
 
         #timeout
@@ -265,6 +268,7 @@ class TCPSession(object):
             self.packet_data_list.append(temp_dict)
             return
 
+        #no timeout
         data_back = current_socket.recvfrom(65565)
         current_socket.close()
 
